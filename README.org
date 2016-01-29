@@ -1,0 +1,13 @@
+* doan - Simple library for analytics 
+
+** Examples
+
+There is a file with numbers, let's try to calculate its mean.
+
+#+BEGIN_SRC python
+from doan import r_num, mean
+print(mean(r_num('/tmp/example-file')))
+#+END_SRC
+
+
+
