@@ -1,6 +1,8 @@
 import io
 import unittest
-from doan.dataset import Dataset, _get_iterator
+from doan.dataset import Dataset, _get_iterator, r_num
+from doan.util import chunk
+from doan.stat import mean
 
 
 class DatasetTest(unittest.TestCase):
@@ -11,6 +13,12 @@ class DatasetTest(unittest.TestCase):
             dts.add_row([i])
         for i in range(2):
             self.assertEqual(N, len([i for i in dts]))
+
+    def test_column(self):
+        dts = Dataset('test_dataset')
+        [dts.add_row(i) for i in chunk(range(6), 3)]        
+        self.assertEquals([0, 3], list(dts.column(0)))
+        self.assertEquals([(1, 2), (4, 5)], list(dts.column(1,2)))
 
 
 class ReaderTest(unittest.TestCase):
@@ -26,3 +34,9 @@ class ReaderTest(unittest.TestCase):
             f.write(s)
         self.assertEqual(N, len([i for i in _get_iterator(fname)]))
         self.assertEqual(fname, _get_iterator(fname).doan_dataset_name)
+
+
+class IntegrationTest(unittest.TestCase):
+    def test_calc_mean(self):
+        self.assertEquals(5., mean(r_num(
+            io.StringIO('\n'.join([str(i) for i in range(11)])))))
