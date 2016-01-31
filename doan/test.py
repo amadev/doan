@@ -2,7 +2,7 @@ import io
 import unittest
 from doan.dataset import Dataset, _get_iterator, r_num
 from doan.util import chunk
-from doan.stat import mean
+from doan.stat import mean, stat
 
 
 class DatasetTest(unittest.TestCase):
@@ -37,6 +37,13 @@ class ReaderTest(unittest.TestCase):
 
 
 class IntegrationTest(unittest.TestCase):
+    def setUp(self):
+        self.dataset = r_num(
+            io.StringIO('\n'.join([str(i) for i in range(11)])))
+        
     def test_calc_mean(self):
-        self.assertEquals(5., mean(r_num(
-            io.StringIO('\n'.join([str(i) for i in range(11)])))))
+        self.assertEquals(5., mean(self.dataset))
+
+    def test_stat(self):
+        st = stat(self.dataset)
+        self.assertEqual(5., st.mean)
