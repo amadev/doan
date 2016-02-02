@@ -1,7 +1,7 @@
 import io
 import unittest
 from doan.dataset import Dataset, _get_iterator, r_num
-from doan.util import chunk
+from doan.util import chunk, fixed_width
 from doan.stat import mean, stat
 
 
@@ -16,9 +16,9 @@ class DatasetTest(unittest.TestCase):
 
     def test_column(self):
         dts = Dataset('test_dataset')
-        [dts.add_row(i) for i in chunk(range(6), 3)]        
-        self.assertEquals([0, 3], list(dts.column(0)))
-        self.assertEquals([(1, 2), (4, 5)], list(dts.column(1,2)))
+        [dts.add_row(i) for i in chunk(range(6), 3)]
+        self.assertEqual([0, 3], list(dts.column(0)))
+        self.assertEqual([(1, 2), (4, 5)], list(dts.column(1,2)))
 
 
 class ReaderTest(unittest.TestCase):
@@ -40,10 +40,19 @@ class IntegrationTest(unittest.TestCase):
     def setUp(self):
         self.dataset = r_num(
             io.StringIO('\n'.join([str(i) for i in range(11)])))
-        
+
     def test_calc_mean(self):
-        self.assertEquals(5., mean(self.dataset))
+        self.assertEqual(5., mean(self.dataset))
 
     def test_stat(self):
         st = stat(self.dataset)
         self.assertEqual(5., st.mean)
+
+
+class UtilTest(unittest.TestCase):
+    def test_fixed_width(self):
+        N = 10
+        self.assertEqual(N, len(fixed_width('1', N)))
+        self.assertEqual(N, len(fixed_width('1' * (N + 1), N)))
+        self.assertEqual(N, len(fixed_width(1.1, N)))
+        self.assertEqual(N, len(fixed_width(1.1 * 1e11, N)))

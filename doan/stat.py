@@ -1,4 +1,5 @@
 import math
+from doan.util import fixed_width
 
 def mean(dataset):
     data = dataset.num_column()
@@ -31,10 +32,18 @@ class stat():
     def __repr__(self):
         return '{}'.format(self.__dict__)
 
-    # TODO pretty print stat format
-
-    # def __str__(self):
-    #     return '|{}|{}|'.format(fixed_text('Mean', 15), fixed_float(self.mean, 14,6))
+    def __str__(self):
+        def fw(s):
+            return fixed_width(s, 15)
+        def tb(*args):
+            return '|{}|\n'.format('|'.join([fw(i) for i in args]))
+        return (tb('mean', self.mean) +
+                tb('std', self.std) +
+                tb('max', self.max) +
+                tb('min', self.min) +
+                tb('', '5%', '16%', '25%', '50%', '75%', '84%', '95%') +
+                tb('pcs.', *self.percentiles) +
+                tb('calc. pcs.', *self.calced_percentiles))
 
 
 def _percentile(values, n, percentile):

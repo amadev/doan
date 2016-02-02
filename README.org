@@ -4,10 +4,30 @@
 
 There is a file with numbers, let's try to calculate its mean.
 
-#+BEGIN_SRC python
-from doan import r_num, mean
+#+BEGIN_SRC python :results output replace
+from doan import *
 print(mean(r_num('/tmp/example-file')))
 #+END_SRC
+
+#+RESULTS:
+: 19.4
+
+If we want to get more information about list then call stat.
+
+#+BEGIN_SRC python :results output replace
+from doan import r_num, stat
+print(stat(r_num('/tmp/example-file')))
+#+END_SRC
+
+#+RESULTS:
+: |           mean|           19.4|
+: |            std|          3.747|
+: |            max|             28|
+: |            min|             14|
+: |               |             5%|            16%|            25%|            50%|            75%|            84%|            95%|
+: |           pcs.|             15|           16.5|           17.5|           18.5|           20.5|             22|           25.5|
+: |     calc. pcs.|         11.906|         15.653|        16.8895|           19.4|        21.9105|         23.147|         26.894|
+: 
 
 
 

@@ -37,6 +37,7 @@ def _get_iterator(obj):
     name = 'unknown'
     # assume that string is filename
     if isinstance(obj, str):
+        # TODO unclosed file issue
         it = open(obj)
         name = obj
     if hasattr(obj, 'doan_dataset_name'):
