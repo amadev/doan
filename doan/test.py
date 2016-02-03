@@ -1,7 +1,7 @@
 import io
 import unittest
 from doan.dataset import Dataset, _get_iterator, r_num
-from doan.util import chunk, fixed_width
+from doan.util import chunk, fixed_width, num_list_equal
 from doan.stat import mean, stat
 
 
@@ -56,3 +56,6 @@ class UtilTest(unittest.TestCase):
         self.assertEqual(N, len(fixed_width('1' * (N + 1), N)))
         self.assertEqual(N, len(fixed_width(1.1, N)))
         self.assertEqual(N, len(fixed_width(1.1 * 1e11, N)))
+
+    def test_num_list_equal(self):
+        self.assertTrue(num_list_equal([1] * 5, [0.9] * 5, 0.1))

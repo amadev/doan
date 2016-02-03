@@ -1,5 +1,7 @@
 import math
-from doan.util import fixed_width
+from doan.util import fixed_width, num_list_equal
+
+PERCENTILES = [0.05, 0.16, 0.25, 0.5, 0.75, 0.84, 0.95]
 
 def mean(dataset):
     data = dataset.num_column()
@@ -17,8 +19,8 @@ class stat():
     def __init__(self, dataset):
         self.mean = mean(dataset)
         self.std = std(dataset, self.mean)
-        self.percentiles = percentiles(dataset, [0.05, 0.16, 0.25, 0.5, 0.75, 0.84, 0.95])
-        self.calced_percentiles = [
+        self.percentiles = percentiles(dataset,  PERCENTILES)
+        self.calculated_percentiles = [
             self.mean - 2 * self.std,
             self.mean - self.std,
             self.mean - 0.67 * self.std,
@@ -28,6 +30,8 @@ class stat():
             self.mean + 2 * self.std]
         self.max = max(dataset.num_column())
         self.min = min(dataset.num_column())
+        self.is_normal = self._is_normal(
+            self.percentiles, self.calculated_percentiles)
 
     def __repr__(self):
         return '{}'.format(self.__dict__)
@@ -41,9 +45,13 @@ class stat():
                 tb('std', self.std) +
                 tb('max', self.max) +
                 tb('min', self.min) +
-                tb('', '5%', '16%', '25%', '50%', '75%', '84%', '95%') +
+                tb('', *['{:.0f}%'.format(i * 100) for i in PERCENTILES]) +
                 tb('pcs.', *self.percentiles) +
-                tb('calc. pcs.', *self.calced_percentiles))
+                tb('calc. pcs.', *self.calculated_percentiles) +
+                tb('normality', self.is_normal))
+
+    def _is_normal(self, prs, calc_prs):
+        return num_list_equal(prs, calc_prs, 0.05)
 
 
 def _percentile(values, n, percentile):
