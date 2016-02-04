@@ -1,11 +1,14 @@
 import math
 from doan.util import fixed_width, num_list_equal
 
+
 PERCENTILES = [0.05, 0.16, 0.25, 0.5, 0.75, 0.84, 0.95]
+
 
 def mean(dataset):
     data = dataset.num_column()
     return sum(data) / float(len(dataset))
+
 
 def std(dataset, m=None):
     n = len(dataset)
@@ -32,6 +35,7 @@ class stat():
         self.min = min(dataset.num_column())
         self.is_normal = self._is_normal(
             self.percentiles, self.calculated_percentiles)
+        self.length = len(dataset)
 
     def __repr__(self):
         return '{}'.format(self.__dict__)
@@ -41,7 +45,8 @@ class stat():
             return fixed_width(s, 15)
         def tb(*args):
             return '|{}|\n'.format('|'.join([fw(i) for i in args]))
-        return (tb('mean', self.mean) +
+        return (tb('length', self.length) +
+                tb('mean', self.mean) +
                 tb('std', self.std) +
                 tb('max', self.max) +
                 tb('min', self.min) +

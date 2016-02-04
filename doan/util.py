@@ -22,7 +22,7 @@ def fixed_width(obj, l):
         if len(obj) > l:
             obj = obj[:l -1] + '.'
         return ('{: >' + str(l) + '}').format(obj)
-    elif isinstance(obj, (float, bool)):
+    elif isinstance(obj, (float, int, bool)):
         precision = 6
         if l <= precision:
             logging.error('Length is too small for float fixed width, '

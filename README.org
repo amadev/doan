@@ -30,5 +30,21 @@ print(stat(r_num('/tmp/example-file')))
 : |      normality|              0|
 : 
 
+Can work with ssh and shell.
 
+#+BEGIN_SRC python :results output replace
+from doan import cmd, r_num, percentiles
+print(percentiles(r_num(cmd("awk '{print $1 - 1}' /tmp/example-file")), [0.95]))
+#+END_SRC
+
+#+RESULTS:
+: [24.5]
+
+#+BEGIN_SRC python :results output replace
+from doan import ssh, r_num, percentiles
+print(percentiles(r_num(ssh('log')('echo "1\n2\n3\n" > /tmp/example-file')), [0.95]))
+#+END_SRC
+
+#+RESULTS:
+: [2.5]
 

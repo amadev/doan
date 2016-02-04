@@ -1,5 +1,7 @@
+import uuid
 from doan.util import lines
 from operator import itemgetter
+from subprocess import check_call
 
 
 class Dataset(object):
@@ -44,6 +46,28 @@ def _get_iterator(obj):
         name = obj.doan_dataset_name
     setattr(it, 'doan_dataset_name', name)
     return it
+
+
+def _tmp_file():
+    return '/tmp/doan-{}'.format(uuid.uuid4())
+
+
+def cmd(command):
+    fn = _tmp_file()
+    check_call(command + ' > {}'.format(fn), shell=True)
+    return fn
+
+
+def ssh(host):
+    def wrapped(command):
+        fn = _tmp_file()
+        check_call('ssh {} "{} > {}"\n'.format(
+            host, command.replace(r'"', r'\"').replace('$', r'\$'), fn),
+                   shell=True)
+        check_call('scp {0}:{1} {1}'.format(host, fn),
+                   shell=True)
+        return fn
+    return wrapped
 
 
 def r_num(obj):
