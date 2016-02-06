@@ -2,6 +2,7 @@ import uuid
 from doan.util import lines
 from operator import itemgetter
 from subprocess import check_call
+from dateutil.parser import parse
 
 
 class Dataset(object):
@@ -9,29 +10,54 @@ class Dataset(object):
     """Table with determined columns data type.
 
     Features:
-    - Data reading with respect to column type.
+    - Data loading with respect to column type
+      (Lines and elements splitting is on iterator side).
     - Columns iterator.
     - Getting column with predifined type.
     """
 
-    TYPES = {'f': lambda v: float(v)}
+    # TODO types register
+    TYPES = {'f': lambda v: float(v),
+             'i': lambda v: int(i),
+             's': lambda v: v,
+             'd': lambda v: parse(v)}
+
     TYPES_MAP = {'num': ['i', 'f']}
 
-    def __init__(self, name):
+    class ParseError(Exception):
+        pass
+
+    def __init__(self, column_types=['f']):
         self.name = ''
         self.rows = []
-        column_types = []
+        # TODO parse column types
+        self.column_types = column_types
         self.length = 0
 
     def __len__(self):
         return self.length
 
-    def parse_line(self, line):
-        row = [self.parse_value(v, i) for i, v in enumerate(line.split())]
+    def load(self, iterator):
+        if hasattr(iterator, 'name'):
+            self.name = iterator.name
+        for i, elements in enumerate(iterator):
+            self.line_index = i + 1
+            self.parse_elements(elements)
+        return self
+
+    def parse_elements(self, elements):
+        row = [self.parse_value(v, i) for i, v in enumerate(elements)]
         self.add_row(row)
 
-    def parse_value(self, v, i):
-        return self.TYPES[self.column_types[i]](v)
+    def parse_value(self, val, type_index):
+        try:
+            return self.TYPES[self.column_types[type_index]](val)
+        except ValueError:
+            raise self.ParseError(
+                ('Invalid value "{}" '
+                 'in line {} for "{}" column type (index: {})').format(
+                     val, self.line_index, self.column_types[type_index],
+                     type_index))
 
     def add_row(self, row):
         self.rows.append(row)
@@ -89,7 +115,10 @@ def ssh(host):
 
 
 class LinesIterator:
-    """Iterate file or any iterable object. """
+    """Iterate file or any iterable object.
+
+    Object knows how to split lines and elements.
+    """
 
     def __init__(self, obj):
         self.obj = obj
@@ -100,26 +129,22 @@ class LinesIterator:
         if self.is_file:
             with open(self.obj) as it:
                 for i in lines(it):
-                    yield i
+                    yield self.split_line(i)
         else:
             for i in lines(self.obj):
-                yield i
+                yield self.split_line(i)
+
+    def split_line(self, line):
+        return line.split()
 
 
 def r_num(obj):
     """Read list of numbers."""
-    dataset = Dataset('test')
-    dataset.column_types = ['f']
-    it = LinesIterator(obj)
-    if it.name:
-        dataset.name = it.name
-
-    for line in it:
-        dataset.parse_line(line)
-
-    return dataset
+    dataset = Dataset(['f'])
+    return dataset.load(LinesIterator(obj))
 
 
-# def r_dvn(obj):
-#     """Read date-value-name table."""
-#     pass
+def r_dvn(obj):
+    """Read date-value-name table."""
+    dataset = Dataset(['d', 'f', 's'])
+    return dataset.load(LinesIterator(obj))

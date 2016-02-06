@@ -8,7 +8,7 @@ from doan.stat import mean, stat
 class DatasetTest(unittest.TestCase):
     def test_dataset_iterator(self):
         """Dataset must correctly work as iterable object."""
-        dts = Dataset('test_dataset')
+        dts = Dataset()
         N = 10
         for i in range(N):
             dts.add_row([i])
@@ -21,13 +21,24 @@ class DatasetTest(unittest.TestCase):
         | 0 | 1 | 2 |
         | 3 | 4 | 5 |
         """
-        dts = Dataset('test_dataset')
+        dts = Dataset()
         [dts.add_row(i) for i in chunk(range(6), 3)]
         for i in range(3):
             self.assertEqual([i, i + 3], list(dts.column(i)))
         # test multiple
         self.assertEqual([(0, 1), (3, 4)], list(dts.column(0,1)))
         self.assertEqual([(1, 2), (4, 5)], list(dts.column(1,2)))
+
+    def test_load_invalid_date_type(self):
+        """Test invalid data for dataset fails with verbose message."""
+        dts = Dataset(['d'])
+        try:
+            dts.load([['aa-bb-cc']])
+            self.fail('dataset has loaded invalid data')
+        except dts.ParseError as exc:
+            self.assertEqual('Invalid value "aa-bb-cc" in line 1 '
+                             'for "d" column type (index: 0)',
+                             str(exc))
 
 
 class ReaderTest(unittest.TestCase):
