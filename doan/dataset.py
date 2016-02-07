@@ -92,8 +92,8 @@ def _get_iterator(obj):
     return it
 
 
-def _tmp_file():
-    return '/tmp/doan-{}'.format(uuid.uuid4())
+def _tmp_file(ext=''):
+    return '/tmp/doan-{}{}'.format(uuid.uuid4(), ext)
 
 
 def cmd(command):
@@ -119,7 +119,7 @@ class LinesIterator:
 
     Object knows how to split lines and elements.
     """
-
+    # TODO move util.lines here
     def __init__(self, obj):
         self.obj = obj
         self.is_file = isinstance(obj, str)
@@ -144,7 +144,7 @@ def r_num(obj):
     return dataset.load(LinesIterator(obj))
 
 
-def r_dvn(obj):
-    """Read date-value-name table."""
-    dataset = Dataset(['d', 'f', 's'])
+def r_date_num(obj):
+    """Read date-value table."""
+    dataset = Dataset(['d', 'f'])
     return dataset.load(LinesIterator(obj))
