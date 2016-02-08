@@ -31,7 +31,7 @@ class DatasetTest(unittest.TestCase):
 
     def test_load_invalid_date_type(self):
         """Test invalid data for dataset fails with verbose message."""
-        dts = Dataset(['d'])
+        dts = Dataset([Dataset.DATE])
         try:
             dts.load([['aa-bb-cc']])
             self.fail('dataset has loaded invalid data')

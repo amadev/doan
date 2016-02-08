@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.dates import HourLocator, MinuteLocator, DateFormatter, date2num
 import datetime as dt
 from itertools import cycle
+from doan.util import get_tmp_file_name
+from doan.dataset import Dataset
 
 
 def plot_date(datasets, color='b', ls='', xlabel='', ylabel='', title='',
@@ -31,7 +33,7 @@ def plot_date(datasets, color='b', ls='', xlabel='', ylabel='', title='',
 
     for dataset in datasets:
         dates = date2num(dataset.get_column_by_type(dataset.DATE))
-        values = dataset.get_column_by_type(dataset.NUM)
+        values = list(dataset.get_column_by_type(dataset.NUM))
         color = next(colors)
         plt.plot_date(dates, values, color=color, ls=ls, label=dataset.name)
 

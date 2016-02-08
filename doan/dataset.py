@@ -1,8 +1,8 @@
-import uuid
 from doan.util import lines
 from operator import itemgetter
 from subprocess import check_call
 from dateutil.parser import parse
+from doan.util import get_tmp_file_name
 
 
 class Dataset(object):
@@ -16,18 +16,25 @@ class Dataset(object):
     - Getting column with predifined type.
     """
 
-    # TODO types register
-    TYPES = {'f': lambda v: float(v),
-             'i': lambda v: int(i),
-             's': lambda v: v,
-             'd': lambda v: parse(v)}
+    DATE = 'd'
+    NUM = 'num'
+    STRING = 's'
+    FLOAT = 'float'
+    INT = 'int'
 
-    TYPES_MAP = {'num': ['i', 'f']}
+    # TODO types register
+    TYPES = {FLOAT: lambda v: float(v),
+             INT: lambda v: int(i),
+             STRING: lambda v: v,
+             DATE: lambda v: parse(v)}
+
+    TYPES_MAP = {NUM: [INT, FLOAT],
+                 DATE: [DATE]}
 
     class ParseError(Exception):
         pass
 
-    def __init__(self, column_types=['f']):
+    def __init__(self, column_types=[FLOAT]):
         self.name = ''
         self.rows = []
         # TODO parse column types
@@ -70,41 +77,23 @@ class Dataset(object):
         for row in self.rows:
             yield itemgetter(*args)(row)
 
-    def num_column(self):
-        column = list(filter(lambda i: i in self.TYPES_MAP['num'],
+    def get_column_by_type(self, column_type):
+        column = list(filter(lambda i: i in self.TYPES_MAP[column_type],
                              self.column_types))
         if len(column) != 1:
             raise ValueError('Can not find single num column')
         return self.column(self.column_types.index(column[0]))
 
 
-def _get_iterator(obj):
-    it = obj
-    name = 'unknown'
-    # assume that string is filename
-    if isinstance(obj, str):
-        # TODO unclosed file issue
-        it = open(obj)
-        name = obj
-    if hasattr(obj, 'doan_dataset_name'):
-        name = obj.doan_dataset_name
-    setattr(it, 'doan_dataset_name', name)
-    return it
-
-
-def _tmp_file(ext=''):
-    return '/tmp/doan-{}{}'.format(uuid.uuid4(), ext)
-
-
 def cmd(command):
-    fn = _tmp_file()
+    fn = get_tmp_file_name()
     check_call(command + ' > {}'.format(fn), shell=True)
     return fn
 
 
 def ssh(host):
     def wrapped(command):
-        fn = _tmp_file()
+        fn = get_tmp_file_name()
         check_call('ssh {} "{} > {}"\n'.format(
             host, command.replace(r'"', r'\"').replace('$', r'\$'), fn),
                    shell=True)
@@ -140,11 +129,11 @@ class LinesIterator:
 
 def r_num(obj):
     """Read list of numbers."""
-    dataset = Dataset(['f'])
+    dataset = Dataset([Dataset.FLOAT])
     return dataset.load(LinesIterator(obj))
 
 
 def r_date_num(obj):
     """Read date-value table."""
-    dataset = Dataset(['d', 'f'])
+    dataset = Dataset([Dataset.DATE, Dataset.FLOAT])
     return dataset.load(LinesIterator(obj))
