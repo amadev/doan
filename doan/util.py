@@ -1,5 +1,7 @@
 import io
 import logging
+import uuid
+import datetime as dt
 
 
 def lines(lns):
@@ -22,7 +24,7 @@ def fixed_width(obj, l):
         if len(obj) > l:
             obj = obj[:l -1] + '.'
         return ('{: >' + str(l) + '}').format(obj)
-    elif isinstance(obj, (float, bool)):
+    elif isinstance(obj, (float, int, bool)):
         precision = 6
         if l <= precision:
             logging.error('Length is too small for float fixed width, '
@@ -41,3 +43,9 @@ def num_list_equal(l1, l2, precision):
     return all(
         element_equal(v1, l2[i], precision)
         for i, v1 in enumerate(l1))
+
+
+def get_tmp_file_name(ext=''):
+    time_part = dt.datetime.now().strftime('%d%H%M%S')
+    return '/tmp/doan-{}-{}{}'.format(
+        time_part, str(uuid.uuid1()).split('-')[0], ext)

@@ -1,0 +1,60 @@
+* examples
+** Histogram
+
+Histogram for consecutive numbers. 
+#+BEGIN_SRC python :results file replace
+from doan import hist
+params = {'cumulative': False, 'normed': 0, 'facecolor': 'r'}
+return hist(range(1, 101), **params)
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-12232240-5d81f862.png]]
+
+#+BEGIN_SRC python :results file replace
+import random
+from doan import hist
+return hist([random.randint(0,100) for i in range(100)], bins=20)
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-12232138-38ac217a.png]]
+
+#+BEGIN_SRC python :results file replace
+import numpy as np
+from doan import hist
+return hist(np.random.randint(100, size=10000), bins=20)
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-12232148-3e9673ec.png]]
+
+** Plot date
+
+#+BEGIN_SRC python :results file replace
+import numpy as np
+import datetime as dt
+from doan import plot_date
+now = dt.datetime.now()
+dates = [now + dt.timedelta(i) for i in range(100)]
+values = np.random.randint(100, size=100)
+return plot_date([[dates, values]])
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-13001713-fc5e1e8c.png]]
+
+
+#+BEGIN_SRC python :results file replace
+import numpy as np
+import datetime as dt
+from doan import plot_date
+now = dt.datetime.now()
+dates = [now + dt.timedelta(hours=i) for i in range(100)]
+values = np.random.randint(100, size=100)
+return plot_date([[dates, values]])
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-13001655-f1c7ed7c.png]]
+

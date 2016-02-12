@@ -1,15 +1,19 @@
 import math
 from doan.util import fixed_width, num_list_equal
+from doan.dataset import Dataset
+
 
 PERCENTILES = [0.05, 0.16, 0.25, 0.5, 0.75, 0.84, 0.95]
 
+
 def mean(dataset):
-    data = dataset.num_column()
-    return sum(data) / float(len(dataset))
+    values = Dataset.get_num_column_or_list(dataset)
+    return sum(values) / float(len(dataset))
+
 
 def std(dataset, m=None):
     n = len(dataset)
-    values = dataset.num_column()
+    values = Dataset.get_num_column_or_list(dataset)
     if m is None:
         m = mean(dataset)
     return (sum((i - m) ** 2  for i in values) / float(n)) ** 0.5
@@ -28,10 +32,11 @@ class stat():
             self.mean + 0.67 * self.std,
             self.mean + self.std,
             self.mean + 2 * self.std]
-        self.max = max(dataset.num_column())
-        self.min = min(dataset.num_column())
+        self.max = max(Dataset.get_num_column_or_list(dataset))
+        self.min = min(Dataset.get_num_column_or_list(dataset))
         self.is_normal = self._is_normal(
             self.percentiles, self.calculated_percentiles)
+        self.length = len(dataset)
 
     def __repr__(self):
         return '{}'.format(self.__dict__)
@@ -41,7 +46,8 @@ class stat():
             return fixed_width(s, 15)
         def tb(*args):
             return '|{}|\n'.format('|'.join([fw(i) for i in args]))
-        return (tb('mean', self.mean) +
+        return (tb('length', self.length) +
+                tb('mean', self.mean) +
                 tb('std', self.std) +
                 tb('max', self.max) +
                 tb('min', self.min) +
@@ -65,6 +71,6 @@ def _percentile(values, n, percentile):
 
 def percentiles(dataset, vals):
     n = len(dataset)
-    values = list(dataset.num_column())
+    values = list(Dataset.get_num_column_or_list(dataset))
     values.sort()
     return [_percentile(values, n, p) for p in vals]
