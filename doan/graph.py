@@ -9,12 +9,32 @@ from doan.util import get_tmp_file_name
 from doan.dataset import Dataset
 
 
-def plot_date(datasets, color='b', ls='', xlabel='', ylabel='', title='',
-              output=None):
+def plot_date(datasets, **kwargs):
+    """Plot points with dates.
+
+    datasets can be Dataset object or list of Dataset.
+    """
+
+    defaults = {
+        'grid': True,
+        'xlabel': '',
+        'ylabel': '',
+        'title': 'Date plot',
+        'output': None,
+    }
+    graph_params = {
+        'color': 'b',
+        'ls': '',
+        'alpha': 0.75,
+    }
+    graph_params.update(kwargs)
+    defaults.update(kwargs)
+
     if isinstance(datasets, Dataset):
         datasets = [datasets]
 
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    color = graph_params.pop('color')
     try:
         del colors[colors.index(color)]
         colors.insert(0, color)
@@ -23,52 +43,59 @@ def plot_date(datasets, color='b', ls='', xlabel='', ylabel='', title='',
     colors = cycle(colors)
 
     fig, ax = plt.subplots()
-    # TODO auto formatter
-    ax.xaxis.set_major_locator(HourLocator())
-    ax.xaxis.set_major_formatter(DateFormatter('%H'))
-    # ax.xaxis.set_minor_locator(MinuteLocator())
+    #ax.fmt_xdata = DateFormatter("%H:%M")
+    fig.autofmt_xdate()
     ax.autoscale_view()
-    ax.fmt_xdata = DateFormatter('%H:%M')
-    ax.grid(True)
 
     for dataset in datasets:
-        dates = date2num(dataset.get_column_by_type(dataset.DATE))
-        values = list(dataset.get_column_by_type(dataset.NUM))
+        if isinstance(dataset, Dataset):
+            dates = dataset.get_column_by_type(dataset.DATE)
+            values = list(dataset.get_column_by_type(dataset.NUM))
+            label = dataset.name
+        else:
+            dates, values = dataset
+            label = ''
+        dates = date2num(dates)
         color = next(colors)
-        plt.plot_date(dates, values, color=color, ls=ls, label=dataset.name)
+        plt.plot_date(dates, values, color=color, label=label, **graph_params)
 
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.title(title)
-
-    plt.legend(loc='best', prop={'size':10})
-    filename = output or get_tmp_file_name('.png')
-    plt.savefig(filename)
-    return filename
-
-
-def hist(dataset, output=None, **kwargs):
-    values = Dataset.get_num_column_or_list(dataset)
-    defaults = {
-        'grid': True,
-        'xlabel': '',
-        'ylabel': '',
-        'title': 'Histogram'
-    }
-    params = {'bins': 20,
-              'normed': 1,
-              'facecolor': 'green',
-              'alpha': 0.75,
-    }
-    params.update(kwargs)
-    defaults.update(kwargs)
-    n, bins, patches = plt.hist(values, **params)
     plt.xlabel(defaults['xlabel'])
     plt.ylabel(defaults['ylabel'])
     plt.title(defaults['title'])
     plt.grid(defaults['grid'])
 
-    filename = output or get_tmp_file_name('.png')
+    plt.legend(loc='best', prop={'size':10})
+    filename = defaults['output'] or get_tmp_file_name('.png')
+    plt.savefig(filename)
+    return filename
+
+
+def hist(dataset, **kwargs):
+    defaults = {
+        'grid': True,
+        'xlabel': '',
+        'ylabel': '',
+        'title': 'Histogram',
+        'output': None,
+    }
+    graph_params = {
+        'bins': 20,
+        'normed': 1,
+        'facecolor': 'green',
+        'alpha': 0.75,
+    }
+    graph_params.update(kwargs)
+    defaults.update(kwargs)
+
+    values = Dataset.get_num_column_or_list(dataset)
+
+    n, bins, patches = plt.hist(values, **graph_params)
+    plt.xlabel(defaults['xlabel'])
+    plt.ylabel(defaults['ylabel'])
+    plt.title(defaults['title'])
+    plt.grid(defaults['grid'])
+
+    filename = defaults['output'] or get_tmp_file_name('.png')
     plt.savefig(filename)
 
     return filename

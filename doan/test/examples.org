@@ -29,3 +29,32 @@ return hist(np.random.randint(100, size=10000), bins=20)
 #+RESULTS:
 [[file:/tmp/doan-12232148-3e9673ec.png]]
 
+** Plot date
+
+#+BEGIN_SRC python :results file replace
+import numpy as np
+import datetime as dt
+from doan import plot_date
+now = dt.datetime.now()
+dates = [now + dt.timedelta(i) for i in range(100)]
+values = np.random.randint(100, size=100)
+return plot_date([[dates, values]])
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-13001713-fc5e1e8c.png]]
+
+
+#+BEGIN_SRC python :results file replace
+import numpy as np
+import datetime as dt
+from doan import plot_date
+now = dt.datetime.now()
+dates = [now + dt.timedelta(hours=i) for i in range(100)]
+values = np.random.randint(100, size=100)
+return plot_date([[dates, values]])
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-13001655-f1c7ed7c.png]]
+
