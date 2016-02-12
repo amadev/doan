@@ -6,20 +6,14 @@ from doan.dataset import Dataset
 PERCENTILES = [0.05, 0.16, 0.25, 0.5, 0.75, 0.84, 0.95]
 
 
-def get_dataset_num_column_or_list(dataset):
-    if isinstance(dataset, Dataset):
-        return dataset.get_column_by_type(Dataset.NUM)
-    return dataset
-
-
 def mean(dataset):
-    values = get_dataset_num_column_or_list(dataset)
+    values = Dataset.get_num_column_or_list(dataset)
     return sum(values) / float(len(dataset))
 
 
 def std(dataset, m=None):
     n = len(dataset)
-    values = get_dataset_num_column_or_list(dataset)
+    values = Dataset.get_num_column_or_list(dataset)
     if m is None:
         m = mean(dataset)
     return (sum((i - m) ** 2  for i in values) / float(n)) ** 0.5
@@ -38,8 +32,8 @@ class stat():
             self.mean + 0.67 * self.std,
             self.mean + self.std,
             self.mean + 2 * self.std]
-        self.max = max(get_dataset_num_column_or_list(dataset))
-        self.min = min(get_dataset_num_column_or_list(dataset))
+        self.max = max(Dataset.get_num_column_or_list(dataset))
+        self.min = min(Dataset.get_num_column_or_list(dataset))
         self.is_normal = self._is_normal(
             self.percentiles, self.calculated_percentiles)
         self.length = len(dataset)
@@ -77,6 +71,6 @@ def _percentile(values, n, percentile):
 
 def percentiles(dataset, vals):
     n = len(dataset)
-    values = list(get_dataset_num_column_or_list(dataset))
+    values = list(Dataset.get_num_column_or_list(dataset))
     values.sort()
     return [_percentile(values, n, p) for p in vals]

@@ -1,0 +1,31 @@
+* examples
+** Histogram
+
+Histogram for consecutive numbers. 
+#+BEGIN_SRC python :results file replace
+from doan import hist
+params = {'cumulative': False, 'normed': 0, 'facecolor': 'r'}
+return hist(range(1, 101), **params)
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-12232240-5d81f862.png]]
+
+#+BEGIN_SRC python :results file replace
+import random
+from doan import hist
+return hist([random.randint(0,100) for i in range(100)], bins=20)
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-12232138-38ac217a.png]]
+
+#+BEGIN_SRC python :results file replace
+import numpy as np
+from doan import hist
+return hist(np.random.randint(100, size=10000), bins=20)
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-12232148-3e9673ec.png]]
+

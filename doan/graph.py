@@ -45,3 +45,30 @@ def plot_date(datasets, color='b', ls='', xlabel='', ylabel='', title='',
     filename = output or get_tmp_file_name('.png')
     plt.savefig(filename)
     return filename
+
+
+def hist(dataset, output=None, **kwargs):
+    values = Dataset.get_num_column_or_list(dataset)
+    defaults = {
+        'grid': True,
+        'xlabel': '',
+        'ylabel': '',
+        'title': 'Histogram'
+    }
+    params = {'bins': 20,
+              'normed': 1,
+              'facecolor': 'green',
+              'alpha': 0.75,
+    }
+    params.update(kwargs)
+    defaults.update(kwargs)
+    n, bins, patches = plt.hist(values, **params)
+    plt.xlabel(defaults['xlabel'])
+    plt.ylabel(defaults['ylabel'])
+    plt.title(defaults['title'])
+    plt.grid(defaults['grid'])
+
+    filename = output or get_tmp_file_name('.png')
+    plt.savefig(filename)
+
+    return filename

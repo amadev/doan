@@ -84,6 +84,12 @@ class Dataset(object):
             raise ValueError('Can not find single num column')
         return self.column(self.column_types.index(column[0]))
 
+    @staticmethod
+    def get_num_column_or_list(dataset):
+        if isinstance(dataset, Dataset):
+            return dataset.get_column_by_type(Dataset.NUM)
+        return dataset
+
 
 def cmd(command):
     fn = get_tmp_file_name()
