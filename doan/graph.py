@@ -19,7 +19,7 @@ def plot_date(datasets, **kwargs):
         'grid': True,
         'xlabel': '',
         'ylabel': '',
-        'title': 'Date plot',
+        'title': '',
         'output': None,
     }
     graph_params = {
@@ -29,6 +29,7 @@ def plot_date(datasets, **kwargs):
     }
     graph_params.update(kwargs)
     defaults.update(kwargs)
+    [graph_params.pop(k) for k in defaults if k in graph_params]
 
     if isinstance(datasets, Dataset):
         datasets = [datasets]
@@ -49,7 +50,7 @@ def plot_date(datasets, **kwargs):
 
     for dataset in datasets:
         if isinstance(dataset, Dataset):
-            dates = dataset.get_column_by_type(dataset.DATE)
+            dates = list(dataset.get_column_by_type(dataset.DATE))
             values = list(dataset.get_column_by_type(dataset.NUM))
             label = dataset.name
         else:
@@ -72,10 +73,10 @@ def plot_date(datasets, **kwargs):
 
 def hist(dataset, **kwargs):
     defaults = {
-        'grid': True,
+        'grid': False,
         'xlabel': '',
         'ylabel': '',
-        'title': 'Histogram',
+        'title': '',
         'output': None,
     }
     graph_params = {
@@ -86,8 +87,9 @@ def hist(dataset, **kwargs):
     }
     graph_params.update(kwargs)
     defaults.update(kwargs)
+    [graph_params.pop(k) for k in defaults if k in graph_params]
 
-    values = Dataset.get_num_column_or_list(dataset)
+    values = list(Dataset.get_num_column_or_list(dataset))
 
     n, bins, patches = plt.hist(values, **graph_params)
     plt.xlabel(defaults['xlabel'])
