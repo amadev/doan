@@ -1,34 +1,96 @@
 * doan - Simple library for analytics 
 
 ** Examples
+   :PROPERTIES:
+   :results:  replace
+   :END:
+
+Prepare files for analysis.
+
+#+BEGIN_SRC python
+import numpy as np
+norm = np.random.normal(0, 0.5, 1000)
+np.savetxt('/tmp/doan-normal', norm)
+rand = np.random.randint(0, 100, 1000)
+np.savetxt('/tmp/doan-rand', rand)
+#+END_SRC
+
+#+RESULTS:
+: None
 
 There is a file with numbers, let's try to calculate its mean.
 
 #+BEGIN_SRC python :results output replace
-from doan import *
-print(mean(r_num('/tmp/example-file')))
+from doan import r_num, mean
+print(mean(r_num('/tmp/doan-normal')))
 #+END_SRC
 
 #+RESULTS:
-: 19.4
+: 0.0010435034863290472
 
 If we want to get more information about list then call stat.
+For normal distributed data.
 
 #+BEGIN_SRC python :results output replace
 from doan import r_num, stat
-print(stat(r_num('/tmp/example-file')))
+print(stat(r_num('/tmp/doan-normal')))
 #+END_SRC
 
 #+RESULTS:
-: |           mean|           19.4|
-: |            std|          3.747|
-: |            max|             28|
-: |            min|             14|
-: |               |             5%|            16%|            25%|            50%|            75%|            84%|            95%|
-: |           pcs.|             15|           16.5|           17.5|           18.5|           20.5|             22|           25.5|
-: |     calc. pcs.|         11.906|         15.653|        16.8895|           19.4|        21.9105|         23.147|         26.894|
-: |      normality|              0|
-: 
+#+begin_example
+|         length|           1000|
+|           mean|      0.0010435|
+|            std|        0.50219|
+|            max|        1.61775|
+|            min|       -1.65335|
+|               |             5%|            16%|            25%|            50%|            75%|            84%|            95%|
+|           pcs.|      -0.804924|      -0.493228|      -0.342069|    -0.00215785|       0.343751|       0.509859|        0.83731|
+|     calc. pcs.|       -1.00334|      -0.501146|      -0.335424|      0.0010435|       0.337511|       0.503233|        1.00542|
+|      normality|              1|
+
+#+end_example
+
+And for random sample.
+
+#+BEGIN_SRC python :results output replace
+from doan import r_num, stat
+print(stat(r_num('/tmp/doan-rand')))
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+|         length|           1000|
+|           mean|         48.731|
+|            std|        28.3555|
+|            max|             99|
+|            min|              0|
+|               |             5%|            16%|            25%|            50%|            75%|            84%|            95%|
+|           pcs.|              5|             17|             25|             48|             74|             83|             94|
+|     calc. pcs.|       -7.98008|        20.3755|        29.7328|         48.731|        67.7292|        77.0865|        105.442|
+|      normality|              0|
+
+#+end_example
+
+To visualize numeric data there is a hist function.
+For normal distributed data.
+
+#+BEGIN_SRC python :results file
+from doan import r_num, hist
+return hist(r_num('/tmp/doan-normal'))
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-24230425-cdc17b24.png]]
+
+And for random sample.
+
+#+BEGIN_SRC python :results file
+from doan import r_num, hist
+return hist(r_num('/tmp/doan-rand'))
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/doan-24230435-d36960aa.png]]
 
 Can work with ssh and shell.
 

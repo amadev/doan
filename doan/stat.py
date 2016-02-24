@@ -1,5 +1,6 @@
 import math
-from doan.util import fixed_width, num_list_equal
+import logging
+from doan.util import fixed_width, element_equal
 from doan.dataset import Dataset
 
 
@@ -57,7 +58,10 @@ class stat():
                 tb('normality', self.is_normal))
 
     def _is_normal(self, prs, calc_prs):
-        return num_list_equal(prs, calc_prs, 0.05)
+        precision = 0.05
+        positive = len([1 for i, v1 in enumerate(prs)
+                        if element_equal(v1, calc_prs[i], precision)])
+        return positive >= 4
 
 
 def _percentile(values, n, percentile):

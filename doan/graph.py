@@ -2,11 +2,14 @@ import os
 import sys
 import io
 import matplotlib.pyplot as plt
-from matplotlib.dates import HourLocator, MinuteLocator, DateFormatter, date2num
+from matplotlib.dates import (
+    HourLocator, MinuteLocator, DateFormatter, date2num)
+import matplotlib.mlab as mlab
 import datetime as dt
 from itertools import cycle
 from doan.util import get_tmp_file_name
 from doan.dataset import Dataset
+from doan.stat import mean, std
 
 
 def plot_date(datasets, **kwargs):
@@ -78,6 +81,7 @@ def hist(dataset, **kwargs):
         'ylabel': '',
         'title': '',
         'output': None,
+        'norm_line': True
     }
     graph_params = {
         'bins': 20,
@@ -92,6 +96,10 @@ def hist(dataset, **kwargs):
     values = list(Dataset.get_num_column_or_list(dataset))
 
     n, bins, patches = plt.hist(values, **graph_params)
+    if defaults['norm_line']:
+        y = mlab.normpdf(bins, mean(values), std(values))
+        l = plt.plot(bins, y, 'r--', linewidth=1)
+
     plt.xlabel(defaults['xlabel'])
     plt.ylabel(defaults['ylabel'])
     plt.title(defaults['title'])
