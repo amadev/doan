@@ -1,3 +1,4 @@
+import logging
 from doan.util import lines
 from operator import itemgetter
 from subprocess import check_call
@@ -74,15 +75,28 @@ class Dataset(object):
         return iter(self.rows)
 
     def column(self, *args):
-        for row in self.rows:
-            yield itemgetter(*args)(row)
+        for i, row in enumerate(self.rows):
+            try:
+                yield itemgetter(*args)(row)
+            except IndexError:
+                logging.warning(
+                    'Can\'t find columns "{}" in row "{}" on line {}'.format(
+                        args, row, i + 1))
+                raise self.ParseError('Not enough colunms in dataset')
 
     def get_column_by_type(self, column_type):
-        column = list(filter(lambda i: i in self.TYPES_MAP[column_type],
-                             self.column_types))
-        if len(column) != 1:
-            raise ValueError('Can not find single num column')
-        return self.column(self.column_types.index(column[0]))
+        types = self.TYPES_MAP[column_type]
+        columns = list(filter(lambda i: i in types, self.column_types))
+        l = len(columns)
+        if l != 1:
+            logging.error(
+                ('There is no single column with types "{}". '
+                 'Current count: {}. '
+                 'Try to check Dataset.column_types or '
+                 'use appropriate read (r_*) function.').format(types, l))
+            raise ValueError(
+                'Can not find single column with certain type')
+        return self.column(self.column_types.index(columns[0]))
 
     @staticmethod
     def get_num_column_or_list(dataset):
