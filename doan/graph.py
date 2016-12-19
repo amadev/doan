@@ -28,14 +28,14 @@ def plot_date(datasets, **kwargs):
         'alpha': 0.75,
     }
     graph_params.update(kwargs)
+    [plot_params.pop(k) for k in defaults if k in plot_params]
     defaults.update(kwargs)
-    [graph_params.pop(k) for k in defaults if k in graph_params]
 
     if isinstance(datasets, Dataset):
         datasets = [datasets]
 
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
-    color = graph_params.pop('color')
+    color = plot_params.pop('color')
     try:
         del colors[colors.index(color)]
         colors.insert(0, color)
@@ -58,7 +58,7 @@ def plot_date(datasets, **kwargs):
             label = ''
         dates = date2num(dates)
         color = next(colors)
-        plt.plot_date(dates, values, color=color, label=label, **graph_params)
+        plt.plot_date(dates, values, color=color, label=label, **plot_params)
 
     plt.xlabel(defaults['xlabel'])
     plt.ylabel(defaults['ylabel'])
@@ -79,19 +79,19 @@ def hist(dataset, **kwargs):
         'title': '',
         'output': None,
     }
-    graph_params = {
+    plot_params = {
         'bins': 20,
         'normed': 1,
         'facecolor': 'green',
         'alpha': 0.75,
     }
-    graph_params.update(kwargs)
+    plot_params.update(kwargs)
+    [plot_params.pop(k) for k in defaults if k in plot_params]
     defaults.update(kwargs)
-    [graph_params.pop(k) for k in defaults if k in graph_params]
 
     values = list(Dataset.get_num_column_or_list(dataset))
 
-    n, bins, patches = plt.hist(values, **graph_params)
+    n, bins, patches = plt.hist(values, **plot_params)
     plt.xlabel(defaults['xlabel'])
     plt.ylabel(defaults['ylabel'])
     plt.title(defaults['title'])
