@@ -139,7 +139,20 @@ def r_num(obj):
     return dataset.load(LinesIterator(obj))
 
 
-def r_date_num(obj):
+def r_date_num(obj, multiple=False):
     """Read date-value table."""
+    if isinstance(obj, (list, tuple)):
+        it = iter
+    else:
+        it = LinesIterator
+    if multiple:
+        datasets = {}
+        for line in it(obj):
+            label = line[2]
+            if label not in datasets:
+                datasets[label] = Dataset([Dataset.DATE, Dataset.FLOAT])
+                datasets[label].name = label
+            datasets[label].parse_elements(line[0:2])
+        return datasets.values()
     dataset = Dataset([Dataset.DATE, Dataset.FLOAT])
-    return dataset.load(LinesIterator(obj))
+    return dataset.load(it(obj))
