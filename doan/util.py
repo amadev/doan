@@ -36,7 +36,7 @@ def fixed_width(obj, l):
 
 
 def element_equal(v1, v2, precision):
-    return abs(v1 - v2) <= v1 * precision
+    return abs(v1 - v2) <= abs(v1 * precision)
 
 
 def num_list_equal(l1, l2, precision):
