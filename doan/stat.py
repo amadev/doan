@@ -8,12 +8,17 @@ PERCENTILES = [0.05, 0.16, 0.25, 0.5, 0.75, 0.84, 0.95]
 
 
 def mean(dataset):
+    n = len(dataset)
+    if not n:
+        raise ValueError('Cannot make calculation for empty dataset')
     values = Dataset.get_num_column_or_list(dataset)
     return sum(values) / float(len(dataset))
 
 
 def std(dataset, m=None):
     n = len(dataset)
+    if not n:
+        raise ValueError('Cannot make calculation for empty dataset')
     values = Dataset.get_num_column_or_list(dataset)
     if m is None:
         m = mean(dataset)
