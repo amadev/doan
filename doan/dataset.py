@@ -149,8 +149,12 @@ class LinesIterator:
 
 def r_num(obj):
     """Read list of numbers."""
+    if isinstance(obj, (list, tuple)):
+        it = iter
+    else:
+        it = LinesIterator
     dataset = Dataset([Dataset.FLOAT])
-    return dataset.load(LinesIterator(obj))
+    return dataset.load(it(obj))
 
 
 def r_date_num(obj, multiple=False):
