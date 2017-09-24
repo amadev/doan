@@ -1,4 +1,5 @@
 import io
+import matplotlib
 import unittest
 from doan.dataset import Dataset, LinesIterator, r_num
 from doan.util import chunk, fixed_width, num_list_equal
@@ -46,7 +47,7 @@ class ReaderTest(unittest.TestCase):
 
     def setUp(self):
         self.N = 10
-        self.str = '1\n' * self.N
+        self.str = u'1\n' * self.N
 
     def test_lines_iterator_stringio(self):
         sio = io.StringIO(self.str)
@@ -63,7 +64,7 @@ class ReaderTest(unittest.TestCase):
 class IntegrationTest(unittest.TestCase):
     def setUp(self):
         self.dataset = r_num(
-            io.StringIO('\n'.join([str(i) for i in range(11)])))
+            io.StringIO(u'\n'.join([unicode(i) for i in range(11)])))
 
     def test_calc_mean(self):
         self.assertEqual(5., mean(self.dataset))

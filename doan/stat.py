@@ -71,7 +71,7 @@ class stat():
 
 def _percentile(values, n, percentile):
     ind = (n - 1) * percentile
-    d, u = math.floor(ind), math.ceil(ind)
+    d, u = int(math.floor(ind)), int(math.ceil(ind))
     if d == u:
         return values[d]
     else:

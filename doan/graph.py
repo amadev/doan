@@ -1,6 +1,8 @@
 import os
 import sys
 import io
+import matplotlib
+matplotlib.use('AGG')
 import matplotlib.pyplot as plt
 from matplotlib.dates import (
     HourLocator, MinuteLocator, DateFormatter, date2num)
@@ -10,6 +12,9 @@ from itertools import cycle
 from doan.util import get_tmp_file_name
 from doan.dataset import Dataset
 from doan.stat import mean, std
+
+
+
 
 
 def _update_params(defaults, plot_params, new):
