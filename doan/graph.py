@@ -12,6 +12,16 @@ from doan.dataset import Dataset
 from doan.stat import mean, std
 
 
+def _update_params(defaults, plot_params, new):
+    new_plot_params = {}
+    for k, v in new.items():
+        if k in defaults:
+            defaults[k] = v
+        else:
+            new_plot_params[k] = v
+    plot_params.update(new_plot_params)
+
+
 def plot_date(datasets, **kwargs):
     """Plot points with dates.
 
@@ -24,16 +34,14 @@ def plot_date(datasets, **kwargs):
         'ylabel': '',
         'title': '',
         'output': None,
+        'figsize': (8, 6),
     }
-    graph_params = {
+    plot_params = {
         'color': 'b',
         'ls': '',
         'alpha': 0.75,
     }
-    graph_params.update(kwargs)
-    [plot_params.pop(k) for k in defaults if k in plot_params]
-    defaults.update(kwargs)
-
+    _update_params(defaults, plot_params, kwargs)
     if isinstance(datasets, Dataset):
         datasets = [datasets]
 
@@ -47,6 +55,7 @@ def plot_date(datasets, **kwargs):
     colors = cycle(colors)
 
     fig, ax = plt.subplots()
+    fig.set_size_inches(*defaults['figsize'])
     #ax.fmt_xdata = DateFormatter("%H:%M")
     fig.autofmt_xdate()
     ax.autoscale_view()
@@ -81,7 +90,8 @@ def hist(dataset, **kwargs):
         'ylabel': '',
         'title': '',
         'output': None,
-        'norm_line': True
+        'norm_line': True,
+        'figsize': (8, 6),
     }
     plot_params = {
         'bins': 20,
@@ -89,9 +99,10 @@ def hist(dataset, **kwargs):
         'facecolor': 'green',
         'alpha': 0.75,
     }
-    plot_params.update(kwargs)
-    [plot_params.pop(k) for k in defaults if k in plot_params]
-    defaults.update(kwargs)
+    _update_params(defaults, plot_params, kwargs)
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches(*defaults['figsize'])
 
     values = list(Dataset.get_num_column_or_list(dataset))
 

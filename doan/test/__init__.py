@@ -3,6 +3,7 @@ import unittest
 from doan.dataset import Dataset, LinesIterator, r_num
 from doan.util import chunk, fixed_width, num_list_equal
 from doan.stat import mean, stat
+from doan.graph import plot_date, hist
 
 
 class DatasetTest(unittest.TestCase):
@@ -82,3 +83,13 @@ class UtilTest(unittest.TestCase):
 
     def test_num_list_equal(self):
         self.assertTrue(num_list_equal([1] * 5, [0.9] * 5, 0.1))
+
+class GraphTest(unittest.TestCase):
+    def test_plot_date(self):
+        d = Dataset([Dataset.DATE, Dataset.INT])
+        plot_date(d)
+
+    def test_hist(self):
+        d = Dataset()
+        d.load([[1], [2], [3]])
+        hist(d)
