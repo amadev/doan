@@ -25,7 +25,7 @@ class Dataset(object):
 
     # TODO types register
     TYPES = {FLOAT: lambda v: float(v),
-             INT: lambda v: int(i),
+             INT: lambda v: int(v),
              STRING: lambda v: v,
              DATE: lambda v: parse(v)}
 
