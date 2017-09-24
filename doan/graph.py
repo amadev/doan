@@ -3,18 +3,16 @@ import sys
 import io
 import matplotlib
 matplotlib.use('AGG')
-import matplotlib.pyplot as plt
-from matplotlib.dates import (
-    HourLocator, MinuteLocator, DateFormatter, date2num)
-import matplotlib.mlab as mlab
-import datetime as dt
-from itertools import cycle
-from doan.util import get_tmp_file_name
-from doan.dataset import Dataset
-from doan.stat import mean, std
-
-
-
+# TODO use right functions for matplotlib
+import matplotlib.pyplot as plt  # noqa
+from matplotlib.dates import (  # noqa
+    HourLocator, MinuteLocator, DateFormatter, date2num)  # noqa
+import matplotlib.mlab as mlab  # noqa
+import datetime as dt  # noqa
+from itertools import cycle  # noqa
+from doan.util import get_tmp_file_name  # noqa
+from doan.dataset import Dataset  # noqa
+from doan.stat import mean, std  # noqa
 
 
 def _update_params(defaults, plot_params, new):
@@ -61,7 +59,6 @@ def plot_date(datasets, **kwargs):
 
     fig, ax = plt.subplots()
     fig.set_size_inches(*defaults['figsize'])
-    #ax.fmt_xdata = DateFormatter("%H:%M")
     fig.autofmt_xdate()
     ax.autoscale_view()
 
@@ -82,7 +79,7 @@ def plot_date(datasets, **kwargs):
     plt.title(defaults['title'])
     plt.grid(defaults['grid'])
 
-    plt.legend(loc='best', prop={'size':10})
+    plt.legend(loc='best', prop={'size': 10})
     filename = defaults['output'] or get_tmp_file_name('.png')
     plt.savefig(filename)
     return filename

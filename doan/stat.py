@@ -22,7 +22,7 @@ def std(dataset, m=None):
     values = Dataset.get_num_column_or_list(dataset)
     if m is None:
         m = mean(dataset)
-    return (sum((i - m) ** 2  for i in values) / float(n)) ** 0.5
+    return (sum((i - m) ** 2 for i in values) / float(n)) ** 0.5
 
 
 class stat():
@@ -50,6 +50,7 @@ class stat():
     def __str__(self):
         def fw(s):
             return fixed_width(s, 15)
+
         def tb(*args):
             return '|{}|\n'.format('|'.join([fw(i) for i in args]))
         return (tb('length', self.length) +

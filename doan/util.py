@@ -22,7 +22,7 @@ def chunk(seq, n):
 def fixed_width(obj, l):
     if isinstance(obj, str):
         if len(obj) > l:
-            obj = obj[:l -1] + '.'
+            obj = obj[:l - 1] + '.'
         return ('{: >' + str(l) + '}').format(obj)
     elif isinstance(obj, (float, int, bool)):
         precision = 6
@@ -32,7 +32,8 @@ def fixed_width(obj, l):
             raise ValueError('Invalid length for float')
         fmt = '{}.{}g'.format(l, precision)
         return ('{:' + fmt + '}').format(obj)
-    raise ValueError('There is no fixed width formatting for {}'.format(type(obj)))
+    raise ValueError('There is no fixed width formatting for {}'.format(
+        type(obj)))
 
 
 def element_equal(v1, v2, precision):

@@ -28,8 +28,8 @@ class DatasetTest(unittest.TestCase):
         for i in range(3):
             self.assertEqual([i, i + 3], list(dts.column(i)))
         # test multiple
-        self.assertEqual([(0, 1), (3, 4)], list(dts.column(0,1)))
-        self.assertEqual([(1, 2), (4, 5)], list(dts.column(1,2)))
+        self.assertEqual([(0, 1), (3, 4)], list(dts.column(0, 1)))
+        self.assertEqual([(1, 2), (4, 5)], list(dts.column(1, 2)))
 
     def test_load_invalid_date_type(self):
         """Test invalid data for dataset fails with verbose message."""
@@ -84,6 +84,7 @@ class UtilTest(unittest.TestCase):
 
     def test_num_list_equal(self):
         self.assertTrue(num_list_equal([1] * 5, [0.9] * 5, 0.1))
+
 
 class GraphTest(unittest.TestCase):
     def test_plot_date(self):
